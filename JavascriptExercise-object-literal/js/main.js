@@ -17,11 +17,12 @@ var menu = {
                 console.log('Deu ruim!');
             }
         });
+        console.log(result);
         return result;
     },
     loadMenu: function(data, olderItems){
         if (typeof olderItems != "undefined") {
-            items = olderItems;
+            items += olderItems;
         }
         else if(typeof olderItems == "undefined") {
             items = "<ul>";
@@ -31,18 +32,16 @@ var menu = {
         $.each(data["menu"], function(index, element){
             if(element["status"] == 'dropdown'){
                 objeto = "";
-                objeto += "<li id='"+ element["text"] +"'>"+ element["text"] +"<ul>";
-                objeto += menu.loadMenu(element, objeto);
+                items += "<li>"+ element["text"] +"<ul>";
+                items = objeto + menu.loadMenu(element, objeto);
 
-                objeto += "</ul></li>";
-                items += objeto;
             }
             else if (element["status"] == 'enabled'){
-                items +="<li id='"+ element["text"] +"'>"+ element["text"] +"</li>";
+                items +="<li>"+ element["text"] +"</li>";
             }
         });
 
-        return items;
+        return items + "</ul></li>";
     },
     appendMenu : function(itens){
         document.write(itens);

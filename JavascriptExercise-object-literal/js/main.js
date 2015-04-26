@@ -3,50 +3,57 @@
  */
 
 var menu = {
-    loadElements: function(){
+    loadElements: function () {
         var result = "";
         $.ajax({
             dataType: "json",
-            url:'./data.json',
+            url: './data.json',
             async: false,
-            success: function(data){
+            success: function (data) {
                 console.log('Foi!');
                 result = data;
             },
-            error: function(data){
+            error: function (data) {
                 console.log('Deu ruim!');
             }
         });
         console.log(result);
         return result;
     },
-    loadMenu: function(data, olderItems){
+    loadMenu: function (data, olderItems) {
         if (typeof olderItems != "undefined") {
             items += olderItems;
         }
-        else if(typeof olderItems == "undefined") {
+        else if (typeof olderItems == "undefined") {
             items = "<ul>";
         }
 
 
-        $.each(data["menu"], function(index, element){
-            if(element["status"] == 'dropdown'){
+        $.each(data["menu"], function (index, element) {
+            if (element["status"] == 'dropdown') {
                 objeto = "";
-                items += "<li>"+ element["text"] +"<ul>";
+                items += "<li><a href='#' onclick:'" + this.loadSubmenu() + "'>" + element["text"] + "<ul class='" + element["status"] + "'>";
                 items = objeto + menu.loadMenu(element, objeto);
-
             }
-            else if (element["status"] == 'enabled'){
-                items +="<li>"+ element["text"] +"</li>";
+            else if (element["status"] == 'enabled') {
+                items += "<li><a href= '" + element["text"] + "'>" + element["text"] + "<a/></li>";
             }
         });
 
-        return items + "</ul></li>";
+        return items + "</ul></a></li>";
     },
-    appendMenu : function(itens){
-        document.write(itens);
+    appendMenu: function (itens) {
+        //document.write(itens);
+        $("#menu").append(itens);
+        $('.dropdown').hide();
         //itens.appendTo("#menu");
+    },
+    loadSubmenu: function () {
+        $("li:has(ul)").click(function () {
+            $("ul", this).slideDown();
+        });
     }
+}
    /* loadMenu: function(data){
         var items = [];
         $.each(data["menu"], function(index, element){
@@ -69,7 +76,7 @@ var menu = {
         }).appendTo("#menu");
     }*/
 
-}
+
 
 //menu.loadElements();
 //menu.loadMenu(menu.loadElements());

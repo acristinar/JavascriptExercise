@@ -20,7 +20,7 @@ var menu = {
                 console.log('Deu ruim!');
             }
         });
-        console.log(result);
+        //console.log(result);
         return result;
     },
     loadMenu: function (data, olderItems) {
@@ -35,7 +35,7 @@ var menu = {
         $.each(data["menu"], function (index, element) {
             if (element["status"] == 'dropdown') {
                 objeto = "";
-                items += "<li><a href='#' onclick:'" + this.loadSubmenu() + "'>" + element["text"] + "<ul class='" + element["status"] + "'>";
+                items += "<li>" + element["text"] + "<ul class='" + element["status"] + " collapsed'>";
                 items = objeto + menu.loadMenu(element, objeto);
             }
             else if (element["status"] == 'enabled') {
@@ -43,17 +43,43 @@ var menu = {
             }
         });
 
-        return items + "</ul></a></li>";
+        return items + "</ul></li>";
     },
     appendMenu: function (itens) {
         //document.write(itens);
         $("#menu").append(itens);
-        $('.dropdown').hide();
+        $('.collapsed').hide();
         //itens.appendTo("#menu");
     },
-    loadSubmenu: function () {
-        $("li:has(ul)").click(function () {
-            $("ul", this).slideDown();
+    clickHandler: function () {
+        $(".dropdown").parent().click(function(){
+            if( $(this).children().hasClass("collapsed") ){
+                $(this).children().slideDown();
+                $(this).children().removeClass("collapsed");
+                $(this).children().addClass("exposed");
+                event.stopPropagation();
+
+            }
+            else if($(this).children().hasClass("exposed")){
+                if( $(this).closest("ul").hasClass("exposed")) {
+                    $(this).children().slideUp();
+                    $(this).children().removeClass("exposed");
+                    $(this).children().addClass("collapsed");
+                }
+                else if( $(this).children("ul").hasClass("exposed")){
+                    $(this).children().find("ul").slideUp()
+                    $(this).children().find("ul").removeClass("exposed");
+                    $(this).children().find("ul").addClass("collapsed");
+                }
+                if( $(this).children().hasClass("collapsed")){
+                    $(this).children().slideUp();
+                    $(this).children().removeClass("exposed");
+                    $(this).children().addClass("collapsed");
+                }
+                $(this).children().slideUp();
+                $(this).children().removeClass("exposed");
+                $(this).children().addClass("collapsed");
+            }
         });
     }
 }
@@ -84,4 +110,4 @@ var menu = {
 //menu.loadElements();
 //menu.loadMenu(menu.loadElements());
 menu.appendMenu(menu.loadMenu(menu.loadElements()));
-
+menu.clickHandler();
